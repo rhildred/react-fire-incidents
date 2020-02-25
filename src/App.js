@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from 'react';
+import axios from 'axios';
+import Map from './components/Map';
+import oCreds from './SanFranciscoOpenData';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    incidents: [],
+  }
+
+  async componentDidMount() {
+    const res = await axios.get('https://data.sfgov.org/resource/wr8u-xric.json', {
+      params: {
+        "$limit": 500,
+        "$$app_token": oCreds["App Token"]
+      }
+    })
+    const incidents = res.data;
+    this.setState({ incidents: incidents });
+  };
+  render() {
+    return (
+      <Map incidents={this.state.incidents} />
+    );
+  }
 }
-
 export default App;
